@@ -1,0 +1,5 @@
+{
+    "python.terminal.activateEnvironment": false,
+    "python.dataScience.jupyterServerURI": "https://lab.nech.top:8888/",
+    "python.pythonPath": "/root/miniconda3/bin/python"
+}
