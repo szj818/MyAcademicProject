@@ -1,3 +1,4 @@
+##本脚本生成翼型以及翼型上方圆柱的振动轨迹，封装函数版
 import os
 import numpy as np
 
@@ -50,7 +51,7 @@ def naca4_symmetric(dots):
     return x,y
     
 def to_mesh_file(tup1):
-    fo = open('trajectory.x',"a+")
+    fo = open(dir+'trajectory.x',"a+")
     for i in range(len(tup1)):
         for j in range(len(tup1[i])):
             flag = ' \n' if (j+1) % 4 == 0 else ''
@@ -75,7 +76,7 @@ xcoord,ycoord=open_file(dir)
 
 line1 = '{:>8d}\n'.format(2)
 line2 = '{0:>8d}{1:>9d}{2:>9d}{3:>9d}\n'.format(len(xcoord),1, dots*2+1, 1)
-fo = open('trajectory.x',"w")
+fo = open(dir+'trajectory.x',"w")
 fo.write(line1+line2)
 fo.close()
 

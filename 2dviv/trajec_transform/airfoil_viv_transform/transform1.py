@@ -1,3 +1,4 @@
+##本脚本生成翼型以及翼型上方圆柱的振动轨迹，最初版本，未封装函数
 import os
 import numpy as np
 
