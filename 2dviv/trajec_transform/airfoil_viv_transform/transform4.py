@@ -1,6 +1,7 @@
 ##本脚本生成翼型以及翼型上方圆柱的振动轨迹，封装函数版，多攻角版,增加了初始时刻圆柱外形的绘制
 import os
 import numpy as np
+import pandas as pd
 
 def open_file(dir):
     try:
@@ -60,21 +61,32 @@ def to_mesh_file(tup1):
         fo.write('\n')
     fo.close()
     return 0
-    
-rad = 0.03
+
+
+distance = [0.03,0.035,0.04,0.045,0.05,
+            0.048,0.056,0.064,0.072,0.08,
+            0.066,0.072,0.078,0.084,0.093,
+            0.08,0.088,0.096,0.104,0.112]
+timestep = [200000,120000,80000,60000] 
+df = pd.DataFrame({'diameter': [ (i//5+1)/100 for i in range(20) ],
+                'distance':distance,
+                'total_step':[ timestep[j//5] for j in range(20) ] },
+                index=['D'+str(i)+'V'+str(j) for i in range(1,5) for j in range(1,6)] )
+
+case='D2V4' 
 dots_cylinder = 101 
 aoas = range(12,25)
 dots_airfoil = 201
-cutoff = 75000 # from which timestep to plot the trajectory
-base_dir="F:/00TEMP/temp data/2DVIV/04_airfoil/D3V4/"
-
+cutoff = df['total_step'][case]-5000 # from which timestep to plot the trajectory
+base_dir="F:/00TEMP/temp data/2DVIV/04_airfoil/" + case + "/"
+                
 for i,aoa in enumerate(aoas):
     dir = base_dir + 'AOA' + str(aoa) + '/'
     print('正在进行'+dir+'的转换......')
     xcoord,ycoord=open_file(dir)
 
     line1 = '{:>8d}\n'.format(3)
-    line2 = '{0:>8d}{1:>9d}{2:>9d}{3:>9d}\n'.format(len(xcoord),1, dots_airfoil*2+1, 1,dots_cylinder,1)
+    line2 = '{0:>8d}{1:>9d}{2:>9d}{3:>9d}{4:>9d}{5:>9d}\n'.format(len(xcoord),1, dots_airfoil*2+1, 1,dots_cylinder,1)
     fo = open(dir+'trajectory.x',"w")
     fo.write(line1+line2)
     fo.close()
@@ -84,8 +96,8 @@ for i,aoa in enumerate(aoas):
     y_a = np.r_[y_t[::-1],0,-y_t]
 
     theta = np.linspace(0,360,dots_cylinder,endpoint=True)
-    x_c = rad*np.cos(theta*np.pi/180)
-    y_c = rad*np.sin(theta*np.pi/180)
+    x_c = df['diameter'][case]/2*np.cos(theta*np.pi/180)
+    y_c = df['distance'][case] + df['diameter'][case]/2*np.sin(theta*np.pi/180)
 
     tup1 = tuple([xcoord,ycoord,x_a,y_a,x_c,y_c])
     to_mesh_file(tup1)
